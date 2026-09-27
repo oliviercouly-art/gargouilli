@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gargouilli - Faim Réelle vs Envie</title>
+    <!-- Tailwind CSS pour un design moderne et responsive -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .pulse-circle {
+            animation: pulse-animation 4s infinite ease-in-out;
+        }
+        @keyframes pulse-animation {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 0 0 25px rgba(249, 115, 22, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="bg-orange-500 text-white w-9 h-9 rounded-2xl flex items-center justify-center font-bold text-lg shadow-md shadow-orange-500/20">G</span>
+                <h1 class="font-bold text-xl text-slate-900 tracking-tight">Gargouilli</h1>
+            </div>
+            <span class="text-xs font-semibold px-2.5 py-1 bg-orange-50 text-orange-600 rounded-full border border-orange-100">Écoute intuitive</span>
+        </div>
+    </header>
+
+    <!-- Conteneur principal (Vues) -->
+    <main class="max-w-md w-full mx-auto px-4 py-6 mb-20">
+
+        <!-- VUE 1 : ACCUEIL -->
+        <div id="view-home" class="view-section space-y-6">
+            <div class="bg-gradient-to-br from-orange-500 to-amber-600 rounded-3xl p-6 text-white shadow-xl shadow-orange-500/20 relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full pointer-events-none"></div>
+                <h2 class="text-2xl font-bold mb-2">Une envie de manger ?</h2>
+                <p class="text-orange-100 text-sm mb-6 leading-relaxed">Faisons le point en quelques secondes pour savoir si ton corps a réellement besoin d'énergie ou si c'est une émotion.</p>
+                <button onclick="startDiagnostic()" class="w-full bg-white text-orange-600 font-bold py-3.5 px-6 rounded-2xl shadow-lg hover:bg-orange-50 transition active:scale-95 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Démarrer le diagnostic</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div onclick="switchTab('journal')" class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:border-orange-200 transition cursor-pointer">
+                    <div class="w-10 h-10 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm">Mon Journal</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Suivi de mes ressentis</p>
+                </div>
+                <div onclick="switchTab('breathe')" class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:border-orange-200 transition cursor-pointer">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-wind"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm">Respiration</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Apaiser l'envie</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm">
+                <div class="flex items-center space-x-3 mb-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-sm">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <h3 class="font-bold text-sm text-slate-900">Le saviez-vous ?</h3>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed">Une faim émotionnelle arrive d'un coup, souvent liée à une envie de texture spécifique (chocolat, croustillant). Une faim réelle s'installe progressivement et s'accommode de n'importe quel aliment.</p>
+            </div>
+        </div>
+
+        <!-- VUE 2 : QUESTIONNAIRE (DIAGNOSTIC) -->
+        <div id="view-quiz" class="view-section hidden space-y-6">
+            <div class="flex items-center justify-between mb-2">
+                <button onclick="switchTab('home')" class="text-slate-400 hover:text-slate-600 text-sm flex items-center space-x-1">
+                    <i class="fa-solid fa-arrow-left"></i> <span>Quitter</span>
+                </button>
+                <span id="quiz-step-indicator" class="text-xs font-semibold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">Étape 1/3</span>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-6">
+                <div id="quiz-question-container">
+                    <!-- Injecté par JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- VUE 3 : RÉSULTAT DU DIAGNOSTIC -->
+        <div id="view-result" class="view-section hidden space-y-6">
+            <div id="result-card-container" class="rounded-3xl p-6 text-white shadow-xl space-y-4">
+                <!-- Injecté par JS -->
+            </div>
+
+            <div id="result-actions" class="space-y-3">
+                <!-- Injecté par JS -->
+            </div>
+
+            <button onclick="switchTab('home')" class="w-full bg-white border border-slate-200 text-slate-700 font-semibold py-3.5 rounded-2xl hover:bg-slate-50 transition">
+                Retour à l'accueil
+            </button>
+        </div>
+
+        <!-- VUE 4 : EXERCICE DE RESPIRATION -->
+        <div id="view-breathe" class="view-section hidden space-y-6 text-center">
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Pause Respiration</h2>
+                    <p class="text-xs text-slate-500 mt-1">Laissez passer la vague d'envie pendant 2 minutes.</p>
+                </div>
+
+                <div class="relative w-48 h-48 mx-auto flex items-center justify-center">
+                    <div id="pulse-circle" class="absolute inset-0 bg-orange-100 rounded-full pulse-circle"></div>
+                    <div class="relative z-10 text-center">
+                        <span id="breathe-instruction" class="block font-bold text-orange-600 text-lg">Inspirez</span>
+                        <span id="breathe-timer" class="text-xs text-slate-400">Suivez le rythme</span>
+                    </div>
+                </div>
+
+                <button id="breathe-btn" onclick="toggleBreathe()" class="w-full bg-orange-500 text-white font-bold py-3.5 rounded-2xl shadow-md hover:bg-orange-600 transition">
+                    Commencer l'exercice
+                </button>
+            </div>
+        </div>
+
+        <!-- VUE 5 : JOURNAL DE BORD -->
+        <div id="view-journal" class="view-section hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Mon Journal</h2>
+                    <p class="text-xs text-slate-500">Historique de vos diagnostics</p>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="shareJournalWithPractitioner()" class="bg-orange-50 text-orange-600 px-3 py-2 rounded-xl text-xs font-semibold hover:bg-orange-100 transition flex items-center space-x-1" title="Envoyer mon bilan à mon praticien">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        <span>Partager</span>
+                    </button>
+                    <button onclick="clearJournal()" class="bg-slate-100 text-slate-500 px-3 py-2 rounded-xl text-xs hover:bg-rose-50 hover:text-rose-500 transition">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="journal-entries" class="space-y-3">
+                <!-- Injecté par JS -->
+            </div>
+        </div>
+
+        <!-- VUE 6 : MON PRATICIEN -->
+        <div id="view-practitioner" class="view-section hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+                <div class="flex items-center space-x-4">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-lg text-slate-900">Mon Praticien</h2>
+                        <p class="text-xs text-orange-600 font-medium">Accompagnement diététique & comportemental</p>
+                    </div>
+                </div>
+
+                <hr class="border-slate-100 my-2">
+
+                <div class="space-y-3 pt-2">
+                    <a href="mailto:olivier@canal-hypnose.fr" class="flex items-center space-x-3 p-3 rounded-2xl bg-slate-50 hover:bg-orange-50 transition text-slate-700 hover:text-orange-600 group">
+                        <div class="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-orange-500">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div class="flex-1">
+                            <span class="block text-xs text-slate-400">Envoyer un e-mail</span>
+                            <span class="font-semibold text-sm">olivier@canal-hypnose.fr</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-300 group-hover:text-orange-500"></i>
+                    </a>
+
+                    <a href="tel:0787215064" class="flex items-center space-x-3 p-3 rounded-2xl bg-slate-50 hover:bg-orange-50 transition text-slate-700 hover:text-orange-600 group">
+                        <div class="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-orange-500">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div class="flex-1">
+                            <span class="block text-xs text-slate-400">Téléphone direct</span>
+                            <span class="font-semibold text-sm">07 87 21 50 64</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-300 group-hover:text-orange-500"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Barre de navigation inférieure -->
+    <nav class="bg-white border-t border-slate-100 fixed bottom-0 left-0 right-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-2 flex justify-around items-center">
+            <button onclick="switchTab('home')" class="nav-btn flex flex-col items-center space-y-1 text-orange-500" data-target="home">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[10px] font-medium">Accueil</span>
+            </button>
+            <button onclick="switchTab('journal')" class="nav-btn flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-600" data-target="journal">
+                <i class="fa-solid fa-book-bookmark text-lg"></i>
+                <span class="text-[10px] font-medium">Journal</span>
+            </button>
+            <button onclick="switchTab('breathe')" class="nav-btn flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-600" data-target="breathe">
+                <i class="fa-solid fa-wind text-lg"></i>
+                <span class="text-[10px] font-medium">Respiration</span>
+            </button>
+            <button onclick="switchTab('practitioner')" class="nav-btn flex flex-col items-center space-y-1 text-slate-400 hover:text-slate-600" data-target="practitioner">
+                <i class="fa-solid fa-user-doctor text-lg"></i>
+                <span class="text-[10px] font-medium">Praticien</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Logique JavaScript -->
+    <script>
+        // Gestion des onglets
+        function switchTab(tabId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.dataset.target === tabId) {
+                    btn.classList.remove('text-slate-400');
+                    btn.classList.add('text-orange-500');
+                } else {
+                    btn.classList.remove('text-orange-500');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+            window.scrollTo(0,0);
+            if(tabId === 'journal') loadJournal();
+        }
+
+        // Questions du diagnostic
+        const quizQuestions = [
+            {
+                title: "Où ressentez-vous principalement cette sensation ?",
+                options: [
+                    { text: "Dans le creux de l'estomac (gargouillis, vide)", score: 'real' },
+                    { text: "Dans la bouche, dans la tête (obsession d'un aliment)", score: 'emotional' },
+                    { text: "C'est une boule de stress ou d'ennui dans la poitrine", score: 'emotional' }
+                ]
+            },
+            {
+                title: "Comment cette envie est-elle apparue ?",
+                options: [
+                    { text: "Progressivement, plusieurs heures après mon dernier repas", score: 'real' },
+                    { text: "Brutalement, suite à un événement, un stress ou de l'ennui", score: 'emotional' },
+                    { text: "C'est venu après avoir vu ou senti quelque chose de tentant", score: 'emotional' }
+                ]
+            },
+            {
+                title: "Si je vous propose un simple plat de légumes ou des crudités...",
+                options: [
+                    { text: "Ça me va tout à fait, j'ai faim !", score: 'real' },
+                    { text: "Ah non, je ne veux que CET aliment précis (sucre, gras...)", score: 'emotional' }
+                ]
+            }
+        ];
+
+        let currentStep = 0;
+        let userAnswers = [];
+
+        function startDiagnostic() {
+            currentStep = 0;
+            userAnswers = [];
+            switchTab('quiz');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            if(currentStep >= quizQuestions.length) {
+                showResult();
+                return;
+            }
+            const q = quizQuestions[currentStep];
+            document.getElementById('quiz-step-indicator').innerText = `Étape ${currentStep + 1}/${quizQuestions.length}`;
+            
+            let html = `<h3 class="font-bold text-lg text-slate-900 mb-4">${q.title}</h3><div class="space-y-3">`;
+            q.options.forEach((opt, idx) => {
+                html += `<button onclick="selectOption('${opt.score}')" class="w-full text-left p-4 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-orange-50 hover:border-orange-200 transition text-sm font-medium text-slate-700">${opt.text}</button>`;
+            });
+            html += `</div>`;
+            document.getElementById('quiz-question-container').innerHTML = html;
+        }
+
+        function selectOption(score) {
+            userAnswers.push(score);
+            currentStep++;
+            renderQuestion();
+        }
+
+        function showResult() {
+            switchTab('result');
+            const emotionalCount = userAnswers.filter(s => s === 'emotional').length;
+            const isReal = emotionalCount === 0;
+
+            const card = document.getElementById('result-card-container');
+            const actions = document.getElementById('result-actions');
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('fr-FR', {day: '2-digit', month: '2-digit'}) + ' à ' + now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+
+            if(isReal) {
+                card.className = "rounded-3xl p-6 text-white bg-gradient-to-br from-emerald-500 to-teal-600 shadow-xl shadow-emerald-500/20 space-y-3";
+                card.innerHTML = `
+                    <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-xl"><i class="fa-solid fa-utensils"></i></div>
+                    <h2 class="text-2xl font-bold">C'est une faim réelle !</h2>
+                    <p class="text-emerald-50 text-sm leading-relaxed">Votre corps exprime un vrai besoin énergétique. Vous pouvez manger sereinement en privilégiant un repas équilibré et en mangeant en pleine conscience.</p>
+                `;
+                actions.innerHTML = `
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-2">
+                        <h4 class="font-bold text-sm text-slate-900">Conseil pour ce repas :</h4>
+                        <p class="text-xs text-slate-600">Posez vos couverts entre chaque bouchée et profitez des saveurs pour capter l'arrivée de la satiété.</p>
+                    </div>
+                `;
+                saveToJournal(dateStr, "Faim Réelle", "Repas conseillé");
+            } else {
+                card.className = "rounded-3xl p-6 text-white bg-gradient-to-br from-amber-500 to-orange-600 shadow-xl shadow-orange-500/20 space-y-3";
+                card.innerHTML = `
+                    <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-xl"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <h2 class="text-2xl font-bold">C'est une envie émotionnelle</h2>
+                    <p class="text-orange-50 text-sm leading-relaxed">Votre estomac ne réclame pas de nourriture. C'est probablement l'ennui, le stress ou la fatigue qui s'expriment.</p>
+                `;
+                actions.innerHTML = `
+                    <button onclick="switchTab('breathe')" class="w-full bg-orange-50 text-orange-600 border border-orange-200 font-semibold py-3.5 rounded-2xl hover:bg-orange-100 transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-wind"></i>
+                        <span>Faire l'exercice de respiration (2 min)</span>
+                    </button>
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-2">
+                        <h4 class="font-bold text-sm text-slate-900">Autre idée douce :</h4>
+                        <p class="text-xs text-slate-600">Buvez un grand verre d'eau ou une tisane chaude, changez de pièce ou accordez-vous 5 minutes de marche.</p>
+                    </div>
+                `;
+                saveToJournal(dateStr, "Envie Émotionnelle", "Respiration / Apaisement");
+            }
+        }
+
+        // Gestion du Journal & LocalStorage
+        function saveToJournal(date, type, action) {
+            let journal = JSON.parse(localStorage.getItem('gargouilli_journal') || '[]');
+            journal.unshift({ date, type, action });
+            if(journal.length > 20) journal.pop(); // Garde les 20 derniers
+            localStorage.setItem('gargouilli_journal', JSON.stringify(journal));
+        }
+
+        function loadJournal() {
+            let journal = JSON.parse(localStorage.getItem('gargouilli_journal') || '[]');
+            const container = document.getElementById('journal-entries');
+            if(journal.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 bg-white rounded-3xl border border-slate-100 p-6"><p class="text-slate-400 text-sm">Aucun enregistrement pour le moment.</p></div>`;
+                return;
+            }
+            let html = '';
+            journal.forEach(item => {
+                const badgeColor = item.type === 'Faim Réelle' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100';
+                html += `
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center">
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-medium">${item.date}</span>
+                            <h4 class="font-bold text-sm text-slate-800 mt-0.5">${item.action}</h4>
+                        </div>
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${badgeColor}">${item.type}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function clearJournal() {
+            if(confirm("Voulez-vous effacer l'historique de votre journal ?")) {
+                localStorage.removeItem('gargouilli_journal');
+                loadJournal();
+            }
+        }
+
+        function shareJournalWithPractitioner() {
+            let journal = JSON.parse(localStorage.getItem('gargouilli_journal') || '[]');
+            if(journal.length === 0) {
+                alert("Votre journal est vide, rien à partager pour l'instant.");
+                return;
+            }
+            let bodyText = "Bonjour Olivier,\n\nVoici le récapitulatif de mes derniers ressentis alimentaires enregistrés sur l'application Gargouilli :\n\n";
+            journal.forEach((item, index) => {
+                bodyText += `- ${item.date} : ${item.type} (${item.action})\n`;
+            });
+            bodyText += "\nÀ très bientôt,\nMon patient.";
+
+            const mailtoUrl = `mailto:olivier@canal-hypnose.fr?subject=${encodeURIComponent("Bilan Gargouilli - Suivi alimentaire")}&body=${encodeURIComponent(bodyText)}`;
+            window.location.href = mailtoUrl;
+        }
+
+        // Exercice de respiration basique
+        let breatheInterval = null;
+        let isBreathing = false;
+        function toggleBreathe() {
+            const btn = document.getElementById('breathe-btn');
+            const instruction = document.getElementById('breathe-instruction');
+            const timer = document.getElementById('breathe-timer');
+
+            if(!isBreathing) {
+                isBreathing = true;
+                btn.innerText = "Arrêter l'exercice";
+                btn.className = "w-full bg-slate-100 text-slate-600 font-bold py-3.5 rounded-2xl transition hover:bg-slate-200";
+                
+                let step = 0;
+                const steps = [
+                    { text: "Inspirez profondément...", time: 4 },
+                    { text: "Retenez votre souffle...", time: 7 },
+                    { text: "Expirez lentement...", time: 8 }
+                ];
+                
+                function runCycle() {
+                    if(!isBreathing) return;
+                    let current = steps[step % steps.length];
+                    instruction.innerText = current.text;
+                    step++;
+                    breatheInterval = setTimeout(runCycle, current.time * 1000);
+                }
+                runCycle();
+            } else {
+                isBreathing = false;
+                clearTimeout(breatheInterval);
+                btn.innerText = "Commencer l'exercice";
+                btn.className = "w-full bg-orange-500 text-white font-bold py-3.5 rounded-2xl shadow-md hover:bg-orange-600 transition";
+                instruction.innerText = "Inspirez";
+            }
+        }
+    </script>
+</body>
+</html>
