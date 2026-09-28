@@ -3,28 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gargouilli - Faim Réelle vs Envie</title>
-    <!-- PWA Manifest & Theme -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#f97316">
-    <link rel="apple-touch-icon" href="icon.png">
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .pulse-circle {
-            animation: pulse-animation 4s infinite ease-in-out;
-        }
-        @keyframes pulse-animation {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
-            50% { transform: scale(1.1); box-shadow: 0 0 0 25px rgba(249, 115, 22, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
-        }
-    </style>
+    <!-- SEO National & Général -->
+    <title>Gargouilli - Faim Réelle ou Faim Émotionnelle ? Outil d'aide en ligne</title>
+    <meta name="description" content="Découvrez Gargouilli, l'application interactive pour faire la différence entre une faim physique et une envie émotionnelle. Outil gratuit créé par Olivier, praticien spécialisé (consultations en cabinet et en visio partout en France).">
+    <meta name="keywords" content="faim émotionnelle, grignotage, régulation alimentaire, satiété, hypnose, visio, Olivier Canal Hypnose">
+    
+    <!-- Open Graph / Réseaux Sociaux & SMS (WhatsApp, iMessage) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gargouilli.vercel.app/">
+    <meta property="og:title" content="Gargouilli - Faim Réelle ou Faim Émotionnelle ?">
+    <meta property="og:description" content="Un outil simple et interactif pour retrouver vos sensations alimentaires naturelles et apaiser vos envies. Accessible partout en France (visio et cabinet).">
+    <meta property="og:image" content="https://gargouilli.vercel.app/icon.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Gargouilli - Faim Réelle ou Faim Émotionnelle ?">
+    <meta name="twitter:description" content="Faites le test pour distinguer faim physique et envie émotionnelle. Outil d'accompagnement.">
+    <meta name="twitter:image" content="https://gargouilli.vercel.app/icon.png">
+
+    <!-- PWA & Favicon -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="theme-color" content="#064e3b">
+
+    <!-- Tailwind CSS (si tu l'utilises via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Script de suivi Vercel Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
 
